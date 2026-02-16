@@ -146,7 +146,7 @@ def print_statistics_table(statistics, name_site):
     print(table.table)
 
 
-if __name__ == "__main__":
+def main():
     load_dotenv()
     secret_key = os.environ["SJ_SECRET_KEY"]
     statistics_sj = get_statistics_sj(secret_key)
@@ -154,3 +154,7 @@ if __name__ == "__main__":
     print_statistics_table(statistics_sj, "SuperJob")
     print()
     print_statistics_table(statistics_hh, "HeadHunter")
+
+
+if __name__ == "__main__":
+    main()
