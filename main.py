@@ -72,7 +72,7 @@ def get_predict_rub_salary_sj(vacancy):
 def get_average_salary_hh(language):
     salary_list = []
     vacancies_array = get_vacancies_hh(language, 20)
-    for vacancies in vacancies_array:      
+    for vacancies in vacancies_array:
         for vacancy in vacancies.get("items"):
             predict_salary = get_predict_rub_salary_hh(vacancy)
             if predict_salary is not None:
@@ -109,8 +109,8 @@ def get_statistics_sj(secret_key):
             "vacancies_found": vacancies_found,
             "vacancies_processed": vacancies_processed,
             "average_salary": average_salary
-            }   
-    
+            }
+
     return statistics
 
 
@@ -123,8 +123,8 @@ def get_statistics_hh():
             "vacancies_found": vacancies_found,
             "vacancies_processed": vacancies_processed,
             "average_salary": average_salary
-            }   
-    
+            }
+
     return statistics
 
 
