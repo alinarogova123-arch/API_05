@@ -7,6 +7,8 @@ from terminaltables import AsciiTable
 
 
 LANGUAGES = ["JavaScript", "Java", "Python", "Ruby", "PHP", "Go"]
+PAGE_QUANTITY = "100"
+VACANCIES_AREA_ID_HH = '1'
 
 
 def get_vacancies_hh(language, page=0):
@@ -15,9 +17,9 @@ def get_vacancies_hh(language, page=0):
     }
     params = {
         "text": f"Программист {language}",
-        "area": "1",
+        "area": VACANCIES_AREA_ID_HH,
         "page": page,
-        "per_page": "100"
+        "per_page": PAGE_QUANTITY
     }
     response = requests.get("https://api.hh.ru/vacancies", headers=headers, params=params)
     response.raise_for_status()
@@ -32,7 +34,7 @@ def get_vacancies_sj(language, secret_key, page=0):
     }
     params = {
         "town": "Москва",
-        "count": "100",
+        "count": PAGE_QUANTITY,
         "page": page,
         "keyword": f"Программист {language}"
     }
