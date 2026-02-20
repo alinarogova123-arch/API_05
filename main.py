@@ -124,25 +124,25 @@ def main():
     for language in LANGUAGES:
 
         vacancies_array_hh = []
-        vacancies_hh = get_vacancies_hh(language)
-        for page_hh in range(vacancies_hh.get('pages')):
+        page_hh = 0
+        while True:
             vacancies_hh = get_vacancies_hh(language, page_hh)
             for vacancy_hh in vacancies_hh.get('items'):
                 vacancies_array_hh.append(vacancy_hh)
+            if page_hh >= vacancies_hh.get('pages'):
+                break
+            page_hh += 1
         statistics_hh[language] = get_statistics(vacancies_hh, vacancies_array_hh)
 
         vacancies_array_sj = []
-        vacancies_sj = get_vacancies_sj(language, secret_key)
         page_sj = 0
-        if vacancies_sj.get('more'):
-            while vacancies_sj.get('more'):
-                vacancies_sj = get_vacancies_sj(language, secret_key, page_sj)
-                page_sj += 1
-                for vacancy_sj in vacancies_sj.get('objects'):
-                    vacancies_array_sj.append(vacancy_sj)
-        else:
+        while True:
+            vacancies_sj = get_vacancies_sj(language, secret_key, page_sj)
             for vacancy_sj in vacancies_sj.get('objects'):
-                vacancies_array_sj.append(vacancy_sj)
+                    vacancies_array_sj.append(vacancy_sj)
+            if not vacancies_sj.get('more'):
+                break
+            page_sj += 1
         statistics_sj[language] = get_statistics(vacancies_sj, vacancies_array_sj)
 
     print_statistics_table(statistics_sj, "SuperJob")
