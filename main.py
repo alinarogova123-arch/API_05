@@ -45,19 +45,8 @@ def get_vacancies_sj(language, secret_key, page=0):
     return vacancies
 
 
-def get_predict_rub_salary(vacancy):
+def get_predict_rub_salary(salary_from, salary_to, salary_currency):
     currencies = ['RUR', 'rub']
-    if vacancy.get('currency'):
-        salary_from = vacancy.get('payment_from')
-        salary_to = vacancy.get('payment_to')
-        salary_currency = vacancy.get('currency')
-    elif vacancy.get("salary"):
-        salary = vacancy.get('salary')
-        salary_from = salary.get('from')
-        salary_to = salary.get('to')
-        salary_currency = salary.get('currency')
-    else:
-        return None
     if salary_currency in currencies and salary_from and salary_to:
         return (salary_from + salary_to) / 2
     elif salary_currency in currencies and salary_from:
@@ -68,12 +57,7 @@ def get_predict_rub_salary(vacancy):
         return None
 
 
-def get_average_salary(vacancies_array):
-    salaries = []
-    for vacancy in vacancies_array:
-        salary = get_predict_rub_salary(vacancy)
-        if salary:
-            salaries.append(salary)
+def get_average_salary(salaries):
     if salaries:
         average_salary = int(sum(salaries) / len(salaries))
         vacancies_processed = len(salaries)
@@ -82,13 +66,8 @@ def get_average_salary(vacancies_array):
         return 0, 0
 
 
-def get_statistics(vacancies, vacancies_array):
-    statistics = {}
-    if vacancies.get("found"):
-        vacancies_found = vacancies.get("found")
-    else:
-        vacancies_found = vacancies.get("total")
-    average_salary, vacancies_processed = get_average_salary(vacancies_array)
+def get_statistics(vacancies_found, salaries):
+    average_salary, vacancies_processed = get_average_salary(salaries)
     statistics = {
         "vacancies_found": vacancies_found,
         "vacancies_processed": vacancies_processed,
@@ -123,27 +102,33 @@ def main():
     statistics_hh = {}
     for language in LANGUAGES:
 
-        vacancies_array_hh = []
+        salaries_hh = []
         page_hh = 0
         while True:
             vacancies_hh = get_vacancies_hh(language, page_hh)
             for vacancy_hh in vacancies_hh.get('items'):
-                vacancies_array_hh.append(vacancy_hh)
+                salary_hh = vacancy_hh.get('salary')
+                if salary_hh:
+                    vacancy_salary_hh = get_predict_rub_salary(salary_hh.get('from'), salary_hh.get('to'), salary_hh.get('currency'))
+                if vacancy_salary_hh:
+                    salaries_hh.append(vacancy_salary_hh)
             if page_hh >= vacancies_hh.get('pages'):
                 break
             page_hh += 1
-        statistics_hh[language] = get_statistics(vacancies_hh, vacancies_array_hh)
+        statistics_hh[language] = get_statistics(vacancies_hh.get("found"), salaries_hh)
 
-        vacancies_array_sj = []
+        salaries_sj = []
         page_sj = 0
         while True:
             vacancies_sj = get_vacancies_sj(language, secret_key, page_sj)
             for vacancy_sj in vacancies_sj.get('objects'):
-                    vacancies_array_sj.append(vacancy_sj)
+                vacancy_salary_sj = get_predict_rub_salary(vacancy_sj.get('payment_from'), vacancy_sj.get('payment_to'), vacancy_sj.get('currency'))
+                if vacancy_salary_sj:
+                    salaries_sj.append(vacancy_salary_sj)
             if not vacancies_sj.get('more'):
                 break
             page_sj += 1
-        statistics_sj[language] = get_statistics(vacancies_sj, vacancies_array_sj)
+        statistics_sj[language] = get_statistics(vacancies_sj.get("total"), salaries_sj)
 
     print_statistics_table(statistics_sj, "SuperJob")
     print()
