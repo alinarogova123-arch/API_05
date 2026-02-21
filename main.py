@@ -47,11 +47,13 @@ def get_vacancies_sj(language, secret_key, page=0):
 
 def get_predict_rub_salary(salary_from, salary_to, salary_currency):
     currencies = ['RUR', 'rub']
-    if salary_currency in currencies and salary_from and salary_to:
+    if salary_currency not in currencies:
+        return None
+    if salary_from and salary_to:
         return (salary_from + salary_to) / 2
-    elif salary_currency in currencies and salary_from:
+    elif salary_from:
         return salary_from * 1.2
-    elif salary_currency in currencies and salary_to:
+    elif salary_to:
         return salary_to * 0.8
     else:
         return None
@@ -138,3 +140,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
