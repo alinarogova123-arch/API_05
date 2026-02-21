@@ -58,12 +58,13 @@ def get_predict_rub_salary(salary_from, salary_to, salary_currency):
 
 
 def get_average_salary(salaries):
-    if salaries:
-        average_salary = int(sum(salaries) / len(salaries))
-        vacancies_processed = len(salaries)
-        return average_salary, vacancies_processed
-    else:
+    if not salaries:
         return 0, 0
+    average_salary = int(sum(salaries) / len(salaries))
+    vacancies_processed = len(salaries)
+    
+    return average_salary, vacancies_processed
+   
 
 
 def get_statistics(vacancies_found, salaries):
